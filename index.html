@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+ 
+
+  
+    #send-container {
+      position: fixed;
+      padding-bottom: 30px;
+      bottom: 0;
+      background-color: white;
+      max-width: 1200px;
+      width: 80%;
+      display: flex;
+    }
+
+    #message-input {
+      flex-grow: 1;
+    }
+    .c{
+        background-color: red;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<script src="https://cdn.socket.io/4.1.2/socket.io.min.js" 
+integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+Rg" crossorigin="anonymous"></script>
+
+
+
+
+
+<body>
+   <div id="message-container"></div>
+<form id="send-container">
+<input type="text" id="message-input">
+<button type="submit" id="send-button">Send</button>
+</form>
+</body>
+
+<script>
+
+
+const socket = io();
+
+
+const msgC = document.getElementById('message-container');
+const form = document.getElementById('send-container');
+const msg = document.getElementById('message-input');
+const btn = document.getElementById('send-button');
+
+
+const name = prompt('What is your name?')
+var newuser = '';
+
+socket.emit('username',name);
+
+socket.on('newuser',nname=>{
+// console.log(nname)
+
+newuser = nname;
+   
+})
+
+socket.on('chat-message',message=>{
+   
+    appendtext(newuser, message);
+})
+
+
+form.onclick = function(e){
+    e.preventDefault();
+    const text = msg.value;
+if(text.length>0){
+
+
+    appendtext('you',text);
+socket.emit('send-message',text);
+msg.value = '';
+}
+}
+
+function appendtext(name,text){
+
+  var cE = document.createElement('div');
+  cE.innerText =name+":"+ text;
+  if(name==='you')
+  {
+      cE.classList.add("c");
+  }
+  msgC.append(cE);
+
+
+}
+    </script>
+
+</html>
